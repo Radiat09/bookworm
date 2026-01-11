@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { model, Schema } from "mongoose";
 import { IBook } from "./book.interface";
 
@@ -107,8 +108,9 @@ const bookSchema = new Schema<IBook>(
     toJSON: {
       virtuals: true,
       transform: function (doc, ret) {
-        delete ret._id;
-        delete ret.__v;
+        // Type assertion to tell TypeScript these properties exist
+        delete (ret as any)._id;
+        delete (ret as any).__v;
         return ret;
       },
     },
@@ -137,7 +139,7 @@ bookSchema.virtual("estimatedReadingHours").get(function () {
 
 // Virtual for reading time in days (assuming 1 hour per day)
 bookSchema.virtual("estimatedReadingDays").get(function () {
-  const readingHours = this.estimatedReadingHours;
+  const readingHours = (this as any).estimatedReadingHours;
   return Math.ceil(readingHours / 1); // Assuming 1 hour per day
 });
 
@@ -158,7 +160,9 @@ bookSchema.virtual("popularityScore").get(function () {
   );
 });
 
-// Pre-save middleware to update genre book count
+// =========== MIDDLEWARE ===========
+
+// Pre-save middleware to update genre book count when creating new book
 bookSchema.pre("save", async function (next) {
   if (this.isNew) {
     try {
@@ -171,11 +175,41 @@ bookSchema.pre("save", async function (next) {
   next();
 });
 
-// Pre-remove middleware to update genre book count
-bookSchema.pre("remove", async function (next) {
+// Pre-findOneAndDelete middleware to update genre book count when deleting
+bookSchema.pre("findOneAndDelete", async function (next) {
   try {
     const Genre = model("Genre");
-    await Genre.findByIdAndUpdate(this.genre, { $inc: { totalBooks: -1 } });
+    const book = await this.model.findOne(this.getFilter());
+
+    if (book) {
+      await Genre.findByIdAndUpdate(book.genre, { $inc: { totalBooks: -1 } });
+    }
+  } catch (error) {
+    return next(error as Error);
+  }
+  next();
+});
+
+// Pre-deleteMany middleware for bulk deletion
+bookSchema.pre("deleteMany", async function (next) {
+  try {
+    const Genre = model("Genre");
+    const books = await this.model.find(this.getFilter());
+
+    // Update genre counts for all affected genres
+    const genreUpdates: Record<string, number> = {};
+
+    books.forEach((book) => {
+      const genreId = book.genre.toString();
+      genreUpdates[genreId] = (genreUpdates[genreId] || 0) + 1;
+    });
+
+    // Apply updates to each genre
+    await Promise.all(
+      Object.entries(genreUpdates).map(([genreId, count]) =>
+        Genre.findByIdAndUpdate(genreId, { $inc: { totalBooks: -count } })
+      )
+    );
   } catch (error) {
     return next(error as Error);
   }

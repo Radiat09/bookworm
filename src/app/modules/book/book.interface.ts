@@ -18,6 +18,11 @@ export interface IBook {
   totalWantToRead: number;
   createdAt?: Date;
   updatedAt?: Date;
+
+  // Virtual properties
+  estimatedReadingHours?: number;
+  estimatedReadingDays?: number;
+  popularityScore?: number;
 }
 
 export interface ICreateBook {

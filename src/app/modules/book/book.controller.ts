@@ -31,7 +31,7 @@ const getAllBooks = catchAsync(async (req: Request, res: Response) => {
 
 const getBookById = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const book = await BookServices.getBookById(id);
+  const book = await BookServices.getBookById(id as string);
 
   sendResponse(res, {
     success: true,
@@ -43,7 +43,7 @@ const getBookById = catchAsync(async (req: Request, res: Response) => {
 
 const updateBook = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const book = await BookServices.updateBook(id, req.body, req.file);
+  const book = await BookServices.updateBook(id as string, req.body, req.file);
 
   sendResponse(res, {
     success: true,
@@ -55,7 +55,7 @@ const updateBook = catchAsync(async (req: Request, res: Response) => {
 
 const deleteBook = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const book = await BookServices.deleteBook(id);
+  const book = await BookServices.deleteBook(id as string);
 
   sendResponse(res, {
     success: true,
@@ -79,7 +79,7 @@ const getBookStats = catchAsync(async (req: Request, res: Response) => {
 const getBooksByGenre = catchAsync(async (req: Request, res: Response) => {
   const { genreId } = req.params;
   const limit = parseInt(req.query.limit as string) || 10;
-  const books = await BookServices.getBooksByGenre(genreId, limit);
+  const books = await BookServices.getBooksByGenre(genreId as string, limit);
 
   sendResponse(res, {
     success: true,

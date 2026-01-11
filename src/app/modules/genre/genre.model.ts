@@ -30,7 +30,7 @@ const genreSchema = new Schema<IGenre>(
     toJSON: {
       virtuals: true,
       transform: function (doc, ret) {
-        delete ret._id;
+        delete (ret as any)._id;
         return ret;
       },
     },
