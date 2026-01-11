@@ -72,7 +72,6 @@ const registerUser = async (
       following: [],
       followers: [],
       isVerified: false,
-      isActive: "active" as const,
       ...rest,
     });
 
