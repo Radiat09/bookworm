@@ -72,19 +72,17 @@ const updateProfilePicture = catchAsync(
   }
 );
 
-const followUser = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const followerId = (req.user as JwtPayload).userId;
-    const { userId } = req.params;
-    const result = await UserServices.followUser(followerId, userId);
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "User followed successfully",
-      data: result,
-    });
-  }
-);
+const followUser = catchAsync(async (req: Request, res: Response) => {
+  const followerId = (req.user as JwtPayload).userId;
+  const { userId } = req.params;
+  const result = await UserServices.followUser(followerId, userId as string);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "User followed successfully",
+    data: result,
+  });
+});
 
 const getFollowing = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -121,19 +119,17 @@ const updateUser = catchAsync(
   }
 );
 
-const updateUserRole = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-    const { role } = req.body;
-    const user = await UserServices.updateUserRole(id, role);
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "User role updated",
-      data: user,
-    });
-  }
-);
+const updateUserRole = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { role } = req.body;
+  const user = await UserServices.updateUserRole(id as string, role);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "User role updated",
+    data: user,
+  });
+});
 
 // Add these to user.controller.ts
 const getAllUsers = catchAsync(

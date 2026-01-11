@@ -169,9 +169,9 @@ const updateProfilePicture = async (userId: string, pictureUrl: string) => {
   if (user.picture) {
     try {
       // Extract public_id from URL if possible
-      const oldPublicId = extractPublicIdFromUrl(user.picture);
-      if (oldPublicId) {
-        await deleteFromCloudinary(oldPublicId);
+      const url = extractPublicIdFromUrl(user.picture);
+      if (url) {
+        await deleteImageFromCLoudinary(url);
       }
     } catch (error) {
       console.warn("Failed to delete old profile picture:", error);
@@ -418,9 +418,9 @@ const permanentlyDeleteUser = async (userId: string) => {
   // Delete profile picture from Cloudinary
   if (user.picture) {
     try {
-      const publicId = extractPublicIdFromUrl(user.picture);
-      if (publicId) {
-        await deleteFromCloudinary(publicId);
+      const url = extractPublicIdFromUrl(user.picture);
+      if (url) {
+        await deleteImageFromCLoudinary(url);
       }
     } catch (error) {
       console.warn("Failed to delete user's profile picture:", error);
