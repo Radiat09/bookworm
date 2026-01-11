@@ -24,11 +24,15 @@ export const validateRequest =
       }
 
       if (options.validateQuery) {
-        req.query = await zodSchema.parseAsync(req.query);
+        // Don't reassign req.query - just validate it
+        await zodSchema.parseAsync(req.query);
+        // The parsed result is returned, but we don't need to reassign
       }
 
       if (options.validateParams) {
-        req.params = await zodSchema.parseAsync(req.params);
+        // Don't reassign req.params - just validate it
+        await zodSchema.parseAsync(req.params);
+        // The parsed result is returned, but we don't need to reassign
       }
 
       next();
@@ -36,3 +40,13 @@ export const validateRequest =
       next(error);
     }
   };
+
+// Alternative: Create separate middlewares
+export const validateBody = (zodSchema: ZodSchema) =>
+  validateRequest(zodSchema, { validateBody: true });
+
+export const validateQuery = (zodSchema: ZodSchema) =>
+  validateRequest(zodSchema, { validateQuery: true });
+
+export const validateParams = (zodSchema: ZodSchema) =>
+  validateRequest(zodSchema, { validateParams: true });
