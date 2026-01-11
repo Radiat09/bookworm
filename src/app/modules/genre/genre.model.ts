@@ -30,6 +30,7 @@ const genreSchema = new Schema<IGenre>(
     toJSON: {
       virtuals: true,
       transform: function (doc, ret) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         delete (ret as any)._id;
         return ret;
       },
