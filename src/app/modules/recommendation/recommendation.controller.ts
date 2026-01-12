@@ -1,17 +1,22 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import httpStatus from "http-status-codes";
 import { JwtPayload } from "jsonwebtoken";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
-import { RecommendationServices } from "../services/recommendation.service";
+import {
+  IRecommendationQuery,
+  RecommendationType,
+} from "./recommendation.interface";
+import { RecommendationServices } from "./recommendation.service";
 
 const getPersonalizedRecommendations = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const userId = (req.user as JwtPayload).userId;
-    const query = {
+
+    const query: IRecommendationQuery = {
       limit: req.query.limit ? parseInt(req.query.limit as string) : undefined,
       refresh: req.query.refresh === "true",
-      type: req.query.type as string,
+      type: req.query.type as RecommendationType,
       includeViewed: req.query.includeViewed === "true",
     };
 
@@ -31,7 +36,7 @@ const getPersonalizedRecommendations = catchAsync(
 );
 
 const getRecommendationStats = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const userId = (req.user as JwtPayload).userId;
     const stats = await RecommendationServices.getRecommendationStats(userId);
 
@@ -45,14 +50,14 @@ const getRecommendationStats = catchAsync(
 );
 
 const markRecommendationViewed = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const userId = (req.user as JwtPayload).userId;
     const { recommendationId } = req.params;
 
     const recommendation =
       await RecommendationServices.markRecommendationViewed(
         userId,
-        recommendationId
+        recommendationId as string
       );
 
     sendResponse(res, {
@@ -65,14 +70,14 @@ const markRecommendationViewed = catchAsync(
 );
 
 const markRecommendationClicked = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const userId = (req.user as JwtPayload).userId;
     const { recommendationId } = req.params;
 
     const recommendation =
       await RecommendationServices.markRecommendationClicked(
         userId,
-        recommendationId
+        recommendationId as string
       );
 
     sendResponse(res, {
@@ -85,7 +90,7 @@ const markRecommendationClicked = catchAsync(
 );
 
 const refreshRecommendations = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const userId = (req.user as JwtPayload).userId;
     const recommendations = await RecommendationServices.refreshRecommendations(
       userId
@@ -100,29 +105,27 @@ const refreshRecommendations = catchAsync(
   }
 );
 
-const getWhyRecommended = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const userId = (req.user as JwtPayload).userId;
-    const { bookId } = req.params;
+const getWhyRecommended = catchAsync(async (req: Request, res: Response) => {
+  const userId = (req.user as JwtPayload).userId;
+  const { bookId } = req.params;
 
-    const whyRecommended = await RecommendationServices.getWhyRecommended(
-      userId,
-      bookId
-    );
+  const whyRecommended = await RecommendationServices.getWhyRecommended(
+    userId,
+    bookId as string
+  );
 
-    sendResponse(res, {
-      success: true,
-      statusCode: httpStatus.OK,
-      message: "Recommendation explanation retrieved",
-      data: whyRecommended,
-    });
-  }
-);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Recommendation explanation retrieved",
+    data: whyRecommended,
+  });
+});
 
 // =========== ADMIN CONTROLLERS ===========
 
 const getSystemRecommendationStats = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const stats = await RecommendationServices.getSystemRecommendationStats();
 
     sendResponse(res, {
@@ -135,7 +138,7 @@ const getSystemRecommendationStats = catchAsync(
 );
 
 const cleanupExpiredRecommendations = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const deletedCount =
       await RecommendationServices.cleanupExpiredRecommendations();
 

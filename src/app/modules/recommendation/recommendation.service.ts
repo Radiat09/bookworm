@@ -1,20 +1,21 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from "http-status-codes";
 import { Types } from "mongoose";
 import AppError from "../../errorHelpers/AppError";
+import { RecommendationEngine } from "../../utils/recommendationEngine";
+import { Book } from "../book/book.model";
 import {
   RECOMMENDATION_EXPIRY_DAYS,
   RECOMMENDATION_LIMIT,
-} from "../constants/recommendation.constant";
+} from "./recommendation.constant";
 import {
   IBookRecommendation,
   IRecommendation,
   IRecommendationQuery,
   IRecommendationStats,
   RecommendationType,
-} from "../interfaces/recommendation.interface";
-import { Recommendation } from "../models/recommendation.model";
-import { Book } from "../modules/book/models/book.model";
-import { RecommendationEngine } from "../utils/recommendationEngine";
+} from "./recommendation.interface";
+import { Recommendation } from "./recommendation.model";
 
 const generateRecommendations = async (
   userId: string,
@@ -343,7 +344,7 @@ const getWhyRecommended = async (
   const allRecommendations = await engine.getRecommendations();
 
   const bookRecommendation = allRecommendations.find(
-    (rec) => rec.book._id.toString() === bookId
+    (rec) => rec.book._id?.toString() === bookId
   );
 
   if (bookRecommendation) {

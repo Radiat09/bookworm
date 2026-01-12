@@ -524,29 +524,30 @@ export class RecommendationEngine {
     >();
 
     deduplicated.forEach((rec) => {
-      const bookId = rec.book._id.toString() || "";
+      const bookId = rec.book._id?.toString() || "";
+      const existing = combinedMap.get(bookId);
 
-      if (combinedMap.has(bookId)) {
-        const existing = combinedMap.get(bookId);
-        // Boost score for multiple strategies
-        existing.score = Math.min(100, existing.score + 10);
-        existing.strategyCount++;
-
-        // Combine reasons
-        rec.reasons.forEach((reason) => {
-          if (!existing.reasons.includes(reason)) {
-            existing.reasons.push(reason);
-          }
-        });
-
-        // Update explanation to indicate multiple strategies
-        existing.explanation = `Recommended based on ${existing.strategyCount} factors`;
-      } else {
+      if (!existing) {
+        // Create new entry
         combinedMap.set(bookId, {
           ...rec,
           strategyCount: 1,
         });
+        return;
       }
+
+      // Update existing entry
+      existing.score = Math.min(100, existing.score + 10);
+      existing.strategyCount++;
+
+      // Combine reasons
+      rec.reasons.forEach((reason) => {
+        if (!existing.reasons.includes(reason)) {
+          existing.reasons.push(reason);
+        }
+      });
+
+      existing.explanation = `Recommended based on ${existing.strategyCount} factors`;
     });
 
     return Array.from(combinedMap.values());
@@ -557,7 +558,7 @@ export class RecommendationEngine {
   ): IBookRecommendation[] {
     const seen = new Set<string>();
     return recommendations.filter((rec) => {
-      const bookId = rec.book._id.toString();
+      const bookId = rec.book._id?.toString() || "";
       if (seen.has(bookId)) return false;
       seen.add(bookId);
       return true;
