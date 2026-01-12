@@ -6,6 +6,7 @@ import { OtpRoutes } from "../modules/otp/otp.route";
 import { RecommendationRoutes } from "../modules/recommendation/recommendation.route";
 import { ReviewRoutes } from "../modules/review/review.route";
 import { ShelfRoutes } from "../modules/shelf/shelf.route";
+import { TutorialRoutes } from "../modules/tutorial/tutorial.route";
 import { UserRoutes } from "../modules/user/user.route";
 
 export const router = Router();
@@ -42,6 +43,10 @@ const moduleRoutes = [
   {
     path: "/recommendation",
     route: RecommendationRoutes,
+  },
+  {
+    path: "/tutorial",
+    route: TutorialRoutes,
   },
 ];
 

@@ -10,29 +10,25 @@ export class QueryBuilder<T> {
     this.query = query;
   }
 
-  filter(): this {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  filter(explicitFilter?: any): this {
+    // Start with the query object
     const filter = { ...this.query };
 
+    // Remove excluded fields
     for (const field of excludeField) {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete filter[field];
     }
 
-    this.modelQuery = this.modelQuery.find(filter); // Tour.find().find(filter)
+    // Merge with explicit filter if provided
+    if (explicitFilter) {
+      Object.assign(filter, explicitFilter);
+    }
 
+    this.modelQuery = this.modelQuery.find(filter);
     return this;
   }
-
-  //   search(searchableField: string[]): this {
-  //     const searchTerm = this.query.searchTerm || "";
-  //     const searchQuery = {
-  //       $or: searchableField.map((field) => ({
-  //         [field]: { $regex: searchTerm, $options: "i" },
-  //       })),
-  //     };
-  //     this.modelQuery = this.modelQuery.find(searchQuery);
-  //     return this;
-  //   }
 
   search(searchableField: string[]): this {
     const searchTerm = this.query.searchTerm || "";
