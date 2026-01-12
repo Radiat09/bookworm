@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
 import { IShelf, ShelfStatus } from "./shelf.interface";
 
 const shelfSchema = new Schema<IShelf>(
@@ -211,4 +211,23 @@ shelfSchema.post("findOneAndDelete", async function (doc, next) {
   next();
 });
 
+shelfSchema.post("save", async function (doc, next) {
+  try {
+    // This is a post-save hook that runs after a book is added to a shelf
+
+    // Your original code here (if any)...
+    // For example, you might have had something like:
+    // - Updating user stats
+    // - Updating book stats
+    // - Triggering notifications
+    // - Updating caches
+
+    // Update recommendation analytics when book is added to shelf
+    const RecommendationModel = mongoose.model("Recommendation") as any;
+    await RecommendationModel.markAsAddedToShelf(doc.book, doc.user);
+  } catch (error) {
+    console.error("Error in shelf post-save middleware:", error);
+  }
+  next();
+});
 export const Shelf = model<IShelf>("Shelf", shelfSchema);
