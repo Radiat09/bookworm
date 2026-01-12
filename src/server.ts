@@ -4,8 +4,6 @@ import mongoose from "mongoose";
 import app from "./app";
 import { envVars } from "./app/config/env";
 import { connectRedis } from "./app/config/redis.config";
-import { seedBooks } from "./app/utils/seedBooks";
-import { seedGenres } from "./app/utils/seedGenre";
 import { seedSuperAdmin } from "./app/utils/seedSuperAdmin";
 
 let server: Server;
@@ -28,8 +26,8 @@ const startServer = async () => {
   await connectRedis();
   await startServer();
   await seedSuperAdmin();
-  await seedGenres(false);
-  await seedBooks(20, false);
+  // await seedGenres(false);
+  // await seedBooks(20, false);
 })();
 
 process.on("SIGTERM", () => {
