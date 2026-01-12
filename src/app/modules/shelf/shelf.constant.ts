@@ -32,3 +32,5 @@ export const shelfPopulateOptions = [
     select: "name email picture",
   },
 ];
+
+export const excludeField = ["page", "sort", "limit", "fields", "searchTerm"];

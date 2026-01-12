@@ -52,24 +52,55 @@ const addToShelf = async (
   return shelf;
 };
 
-// services/shelf.service.ts - FIXED VERSION
+// const getMyShelves = async (userId: string, query: Record<string, string>) => {
+//   // DON'T add user to query object - add it directly to the model query
+//   const shelfQuery = Shelf.find({ user: userId }).populate(
+//     shelfPopulateOptions
+//   );
+
+//   const queryBuilder = new QueryBuilder(shelfQuery, query);
+
+//   const finalQuery = queryBuilder
+//     .filter()
+//     .search(shelfSearchableFields)
+//     .sort()
+//     .fields()
+//     .paginate();
+
+//   const [data, meta] = await Promise.all([
+//     finalQuery.build().exec(), // Add .exec() here
+//     queryBuilder.getMeta(),
+//   ]);
+
+//   return {
+//     data,
+//     meta,
+//   };
+// };
 const getMyShelves = async (userId: string, query: Record<string, string>) => {
-  // Start with user filter
-  const shelfQuery = Shelf.find({ user: userId }).populate(
-    shelfPopulateOptions
+  // Add user filter to query
+  const userQuery = { ...query, user: userId };
+
+  const queryBuilder = new QueryBuilder(
+    Shelf.find().populate(shelfPopulateOptions),
+    userQuery
   );
 
-  const queryBuilder = new QueryBuilder(shelfQuery, query);
+  queryBuilder.filter();
 
-  const finalQuery = queryBuilder
-    .filter() // This should ADD to existing filter, not replace
+  queryBuilder.search(shelfSearchableFields);
+
+  const shelfQuery = queryBuilder
+    .filter()
     .search(shelfSearchableFields)
     .sort()
     .fields()
     .paginate();
 
+  const builtQuery = shelfQuery.build();
+
   const [data, meta] = await Promise.all([
-    finalQuery.build(),
+    builtQuery.exec(),
     queryBuilder.getMeta(),
   ]);
 
