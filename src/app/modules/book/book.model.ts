@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 import { IBook } from "./book.interface";
 
 const bookSchema = new Schema<IBook>(
@@ -216,4 +216,59 @@ bookSchema.pre("deleteMany", async function (next) {
   next();
 });
 
+// In book.model.ts - Add static methods
+bookSchema.statics.updateBookShelvedCounts = async function (
+  bookId: Types.ObjectId | string,
+  shelfType: "wantToRead" | "currentlyReading" | "read",
+  action: "add" | "remove"
+) {
+  const increment = action === "add" ? 1 : -1;
+
+  const updateFields: any = {
+    $inc: { totalShelved: increment },
+  };
+
+  switch (shelfType) {
+    case "wantToRead":
+      updateFields.$inc.totalWantToRead = increment;
+      break;
+    case "currentlyReading":
+      updateFields.$inc.totalCurrentlyReading = increment;
+      break;
+    case "read":
+      updateFields.$inc.totalRead = increment;
+      break;
+  }
+
+  await this.findByIdAndUpdate(bookId, updateFields);
+};
+
+bookSchema.statics.updateBookRating = async function (
+  bookId: Types.ObjectId | string,
+  newRating: number,
+  oldRating?: number
+) {
+  const book = await this.findById(bookId);
+  if (!book) return;
+
+  let newAverageRating = book.averageRating;
+  let newTotalReviews = book.totalReviews;
+
+  if (oldRating !== undefined) {
+    // Updating existing rating
+    const totalRating = book.averageRating * book.totalReviews;
+    const newTotalRating = totalRating - oldRating + newRating;
+    newAverageRating = newTotalRating / book.totalReviews;
+  } else {
+    // Adding new rating
+    const totalRating = book.averageRating * book.totalReviews;
+    newTotalReviews = book.totalReviews + 1;
+    newAverageRating = (totalRating + newRating) / newTotalReviews;
+  }
+
+  await this.findByIdAndUpdate(bookId, {
+    averageRating: Math.round(newAverageRating * 10) / 10,
+    totalReviews: newTotalReviews,
+  });
+};
 export const Book = model<IBook>("Book", bookSchema);

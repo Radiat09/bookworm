@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Model, Types } from "mongoose";
 
 export interface IBook {
   _id?: Types.ObjectId;
@@ -86,4 +86,19 @@ export interface IBookStats {
     totalShelved: number;
     coverImage: string;
   }[];
+}
+
+// In book.interface.ts
+export interface IBookModel extends Model<IBook> {
+  updateBookShelvedCounts(
+    bookId: Types.ObjectId | string,
+    shelfType: "wantToRead" | "currentlyReading" | "read",
+    action: "add" | "remove"
+  ): Promise<void>;
+
+  updateBookRating(
+    bookId: Types.ObjectId | string,
+    newRating: number,
+    oldRating?: number
+  ): Promise<void>;
 }

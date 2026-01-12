@@ -120,3 +120,24 @@ export interface IUserModel extends Model<IUser> {
     usersByRole: Record<string, number>;
   }>;
 }
+
+export interface IUserModel extends Model<IUser> {
+  // Static methods
+  getTopReaders(limit?: number): Promise<IUser[]>;
+  getUserStats(): Promise<{
+    totalUsers: number;
+    activeUsers: number;
+    usersByRole: Record<string, number>;
+  }>;
+
+  // Add this method
+  updateReadingProgress(
+    userId: string,
+    bookData: {
+      pagesRead: number;
+      isCompleted: boolean;
+      genreId?: Types.ObjectId;
+      rating?: number;
+    }
+  ): Promise<void>;
+}

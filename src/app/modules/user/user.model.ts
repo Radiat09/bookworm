@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { model, Schema, Types } from "mongoose";
 import {
   IAuthProvider,
@@ -210,5 +211,98 @@ userSchema.statics.getUserStats = async function (): Promise<{
   return stats[0] || { totalUsers: 0, activeUsers: 0, usersByRole: {} };
 };
 
+// Add static method for updating reading progress
+userSchema.statics.updateReadingProgress = async function (
+  userId: string,
+  bookData: {
+    pagesRead: number;
+    isCompleted: boolean;
+    genreId?: Types.ObjectId;
+    rating?: number;
+  }
+): Promise<void> {
+  const user = await this.findById(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  // Ensure readingStats exists
+  if (!user.readingStats) {
+    user.readingStats = {
+      totalBooksRead: 0,
+      totalPagesRead: 0,
+      averageRating: 0,
+      favoriteGenres: [],
+      readingStreak: 0,
+    };
+  }
+
+  // Update pages read
+  user.readingStats.totalPagesRead += bookData.pagesRead;
+
+  // Update books read if completed
+  if (bookData.isCompleted) {
+    user.readingStats.totalBooksRead += 1;
+
+    // Update reading goal progress
+    if (
+      user.readingGoal &&
+      user.readingGoal.year === new Date().getFullYear()
+    ) {
+      user.readingGoal.booksCompleted += 1;
+      user.readingGoal.pagesRead += bookData.pagesRead;
+    }
+  }
+
+  // Update average rating if provided
+  if (bookData.rating && user.readingStats.totalBooksRead > 0) {
+    const currentTotal =
+      user.readingStats.averageRating * (user.readingStats.totalBooksRead - 1);
+    user.readingStats.averageRating =
+      (currentTotal + bookData.rating) / user.readingStats.totalBooksRead;
+  } else if (bookData.rating) {
+    // First book with rating
+    user.readingStats.averageRating = bookData.rating;
+  }
+
+  // Add genre to favorites if provided
+  if (
+    bookData.genreId &&
+    !user.readingStats.favoriteGenres.includes(bookData.genreId)
+  ) {
+    user.readingStats.favoriteGenres.push(bookData.genreId);
+  }
+
+  // Update reading streak using instance method
+  if (typeof (user as any).updateReadingStreak === "function") {
+    (user as any).updateReadingStreak();
+  } else {
+    // Fallback: Update streak manually
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    const lastDate = user.readingStats.lastReadingDate;
+
+    if (!lastDate) {
+      user.readingStats.readingStreak = 1;
+    } else {
+      const last = new Date(lastDate);
+      const isSameDay = last.toDateString() === today.toDateString();
+      const isYesterday = last.toDateString() === yesterday.toDateString();
+
+      if (!isSameDay) {
+        if (isYesterday) {
+          user.readingStats.readingStreak += 1;
+        } else {
+          user.readingStats.readingStreak = 1;
+        }
+      }
+    }
+    user.readingStats.lastReadingDate = today;
+  }
+
+  await user.save();
+};
 // =========== CREATE MODEL WITH STATIC METHODS ===========
 export const User = model<IUser, IUserModel>("User", userSchema);
