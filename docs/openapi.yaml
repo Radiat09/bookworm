@@ -1,0 +1,103 @@
+openapi: 3.0.1
+info:
+  title: Bookworm API
+  version: 1.0.0
+  description: Starter OpenAPI spec for the Bookworm backend. Expand as endpoints are finalized.
+servers:
+  - url: http://localhost:5000/api/v1
+paths:
+  /:
+    get:
+      summary: Health / welcome
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+  /auth/login:
+    post:
+      summary: Login with email + password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Login"
+      responses:
+        "200":
+          description: Login succeeded
+  /book:
+    get:
+      summary: Get books (query support)
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of books
+    post:
+      summary: Create book (multipart/form-data)
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                author:
+                  type: string
+                cover:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: Created
+  /book/{id}:
+    get:
+      summary: Get book by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Book
+components:
+  schemas:
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    Book:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        author:
+          type: string
+        genre:
+          $ref: "#/components/schemas/Genre"
+    Genre:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
