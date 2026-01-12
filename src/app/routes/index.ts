@@ -3,6 +3,7 @@ import { AuthRoutes } from "../modules/auth/auth.route";
 import { BookRoutes } from "../modules/book/book.route";
 import { GenreRoutes } from "../modules/genre/genre.route";
 import { OtpRoutes } from "../modules/otp/otp.route";
+import { ReviewRoutes } from "../modules/review/review.route";
 import { ShelfRoutes } from "../modules/shelf/shelf.route";
 import { UserRoutes } from "../modules/user/user.route";
 
@@ -32,6 +33,10 @@ const moduleRoutes = [
   {
     path: "/shelf",
     route: ShelfRoutes,
+  },
+  {
+    path: "/review",
+    route: ReviewRoutes,
   },
 ];
 

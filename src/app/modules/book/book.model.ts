@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { model, Schema, Types } from "mongoose";
-import { IBook } from "./book.interface";
+import { IBook, IBookModel } from "./book.interface";
 
 const bookSchema = new Schema<IBook>(
   {
@@ -271,4 +271,5 @@ bookSchema.statics.updateBookRating = async function (
     totalReviews: newTotalReviews,
   });
 };
-export const Book = model<IBook>("Book", bookSchema);
+
+export const Book = model<IBook, IBookModel>("Book", bookSchema);

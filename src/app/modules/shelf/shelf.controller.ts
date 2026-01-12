@@ -36,7 +36,7 @@ const getMyShelves = catchAsync(async (req: Request, res: Response) => {
 const getShelfByBook = catchAsync(async (req: Request, res: Response) => {
   const userId = (req.user as JwtPayload).userId;
   const { bookId } = req.params;
-  const shelf = await ShelfServices.getShelfByBook(userId, bookId);
+  const shelf = await ShelfServices.getShelfByBook(userId, bookId as string);
 
   sendResponse(res, {
     success: true,
@@ -49,7 +49,11 @@ const getShelfByBook = catchAsync(async (req: Request, res: Response) => {
 const updateShelf = catchAsync(async (req: Request, res: Response) => {
   const userId = (req.user as JwtPayload).userId;
   const { shelfId } = req.params;
-  const shelf = await ShelfServices.updateShelf(userId, shelfId, req.body);
+  const shelf = await ShelfServices.updateShelf(
+    userId,
+    shelfId as string,
+    req.body
+  );
 
   sendResponse(res, {
     success: true,
