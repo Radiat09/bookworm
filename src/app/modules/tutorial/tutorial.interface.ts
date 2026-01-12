@@ -14,6 +14,10 @@ export interface ITutorial {
   order: number;
   createdAt?: Date;
   updatedAt?: Date;
+
+  // Virtual properties
+  youtubeId: string;
+  embedUrl: string;
 }
 
 export interface ICreateTutorial {

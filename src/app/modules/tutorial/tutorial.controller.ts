@@ -47,7 +47,7 @@ const getPublishedTutorials = catchAsync(
 
 const getTutorialById = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const tutorial = await TutorialServices.getTutorialById(id);
+  const tutorial = await TutorialServices.getTutorialById(id as string);
 
   sendResponse(res, {
     success: true,
@@ -59,7 +59,10 @@ const getTutorialById = catchAsync(async (req: Request, res: Response) => {
 
 const updateTutorial = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const tutorial = await TutorialServices.updateTutorial(id, req.body);
+  const tutorial = await TutorialServices.updateTutorial(
+    id as string,
+    req.body
+  );
 
   sendResponse(res, {
     success: true,
@@ -71,7 +74,7 @@ const updateTutorial = catchAsync(async (req: Request, res: Response) => {
 
 const deleteTutorial = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const tutorial = await TutorialServices.deleteTutorial(id);
+  const tutorial = await TutorialServices.deleteTutorial(id as string);
 
   sendResponse(res, {
     success: true,
@@ -83,7 +86,7 @@ const deleteTutorial = catchAsync(async (req: Request, res: Response) => {
 
 const publishTutorial = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const tutorial = await TutorialServices.publishTutorial(id);
+  const tutorial = await TutorialServices.publishTutorial(id as string);
 
   sendResponse(res, {
     success: true,
@@ -95,7 +98,7 @@ const publishTutorial = catchAsync(async (req: Request, res: Response) => {
 
 const unpublishTutorial = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const tutorial = await TutorialServices.unpublishTutorial(id);
+  const tutorial = await TutorialServices.unpublishTutorial(id as string);
 
   sendResponse(res, {
     success: true,

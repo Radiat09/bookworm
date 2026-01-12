@@ -129,7 +129,7 @@ const getShelfStats = catchAsync(async (req: Request, res: Response) => {
 const toggleFavorite = catchAsync(async (req: Request, res: Response) => {
   const userId = (req.user as JwtPayload).userId;
   const { shelfId } = req.params;
-  const shelf = await ShelfServices.toggleFavorite(userId, shelfId);
+  const shelf = await ShelfServices.toggleFavorite(userId, shelfId as string);
 
   sendResponse(res, {
     success: true,
