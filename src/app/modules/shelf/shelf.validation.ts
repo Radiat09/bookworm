@@ -6,15 +6,21 @@ export const createShelfZodSchema = z.object({
     required_error: "Book ID is required",
     invalid_type_error: "Book ID must be a string",
   }),
-  status: z.enum(
-    [ShelfStatus.WANT_TO_READ, ShelfStatus.CURRENTLY_READING, ShelfStatus.READ],
-    {
-      required_error: "Status is required",
-      invalid_type_error: `Status must be one of: ${Object.values(
-        ShelfStatus
-      ).join(", ")}`,
-    }
-  ),
+  status: z
+    .enum(
+      [
+        ShelfStatus.WANT_TO_READ,
+        ShelfStatus.CURRENTLY_READING,
+        ShelfStatus.READ,
+      ],
+      {
+        required_error: "Status is required",
+        invalid_type_error: `Status must be one of: ${Object.values(
+          ShelfStatus
+        ).join(", ")}`,
+      }
+    )
+    .optional(),
   pagesRead: z
     .number({
       invalid_type_error: "Pages read must be a number",

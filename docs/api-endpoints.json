@@ -1,0 +1,587 @@
+{
+  "basePath": "/api/v1",
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "auth": "none",
+      "validation": [],
+      "description": "Login with credentials; returns access & refresh tokens."
+    },
+    {
+      "method": "POST",
+      "path": "/auth/refresh-token",
+      "auth": "none",
+      "validation": [],
+      "description": "Exchange refresh token for new access token."
+    },
+    {
+      "method": "POST",
+      "path": "/auth/logout",
+      "auth": "none",
+      "validation": [],
+      "description": "Logout / invalidate session."
+    },
+    {
+      "method": "POST",
+      "path": "/auth/change-password",
+      "auth": "authenticated (any role)",
+      "validation": [],
+      "description": "Change password for authenticated user."
+    },
+    {
+      "method": "POST",
+      "path": "/auth/set-password",
+      "auth": "authenticated (any role)",
+      "validation": [],
+      "description": "Set initial password (invite/reset flows)."
+    },
+    {
+      "method": "POST",
+      "path": "/auth/forgot-password",
+      "auth": "none",
+      "validation": [],
+      "description": "Start password reset (send email)."
+    },
+    {
+      "method": "POST",
+      "path": "/auth/reset-password",
+      "auth": "short-lived token (auth)",
+      "validation": [],
+      "description": "Finalize password reset."
+    },
+    {
+      "method": "GET",
+      "path": "/auth/google",
+      "auth": "none",
+      "validation": [],
+      "description": "Start Google OAuth (passport)."
+    },
+    {
+      "method": "GET",
+      "path": "/auth/google/callback",
+      "auth": "none",
+      "validation": [],
+      "description": "Google OAuth callback (redirects to frontend)."
+    },
+
+    {
+      "method": "POST",
+      "path": "/user/register",
+      "auth": "none",
+      "validation": [],
+      "description": "Register new user (supports profile picture upload)."
+    },
+    {
+      "method": "GET",
+      "path": "/user/me",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Get current user profile."
+    },
+    {
+      "method": "PATCH",
+      "path": "/user/me",
+      "auth": "USER|ADMIN",
+      "validation": ["updateUserZodSchema"],
+      "description": "Update current user profile."
+    },
+    {
+      "method": "POST",
+      "path": "/user/me/reading-goal",
+      "auth": "USER|ADMIN",
+      "validation": ["setReadingGoalZodSchema"],
+      "description": "Set reading goal."
+    },
+    {
+      "method": "GET",
+      "path": "/user/me/reading-stats",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Get reading stats for current user."
+    },
+    {
+      "method": "PATCH",
+      "path": "/user/me/profile-picture",
+      "auth": "USER|ADMIN",
+      "validation": ["updateProfilePictureZodSchema"],
+      "description": "Update profile picture."
+    },
+    {
+      "method": "POST",
+      "path": "/user/follow/:userId",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Follow another user."
+    },
+    {
+      "method": "DELETE",
+      "path": "/user/unfollow/:userId",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Unfollow a user."
+    },
+    {
+      "method": "GET",
+      "path": "/user/me/following",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "List users the current user follows."
+    },
+    {
+      "method": "GET",
+      "path": "/user/me/followers",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "List user's followers."
+    },
+    {
+      "method": "GET",
+      "path": "/user/all-users",
+      "auth": "ADMIN|SUPER_ADMIN",
+      "validation": [],
+      "description": "Admin: list all users."
+    },
+    {
+      "method": "GET",
+      "path": "/user/:id",
+      "auth": "ADMIN|SUPER_ADMIN",
+      "validation": [],
+      "description": "Admin: get single user by id."
+    },
+    {
+      "method": "PATCH",
+      "path": "/user/:id",
+      "auth": "ADMIN|SUPER_ADMIN",
+      "validation": ["updateUserZodSchema"],
+      "description": "Admin: update a user by id."
+    },
+    {
+      "method": "PATCH",
+      "path": "/user/:id/role",
+      "auth": "ADMIN|SUPER_ADMIN",
+      "validation": [],
+      "description": "Admin: update user's role."
+    },
+
+    {
+      "method": "POST",
+      "path": "/otp/send",
+      "auth": "none",
+      "validation": [],
+      "description": "Send an OTP (email/SMS)."
+    },
+    {
+      "method": "POST",
+      "path": "/otp/verify",
+      "auth": "none",
+      "validation": [],
+      "description": "Verify an OTP."
+    },
+
+    {
+      "method": "GET",
+      "path": "/genre",
+      "auth": "none",
+      "validation": [],
+      "description": "List all genres."
+    },
+    {
+      "method": "GET",
+      "path": "/genre/popular",
+      "auth": "none",
+      "validation": [],
+      "description": "List popular genres."
+    },
+    {
+      "method": "GET",
+      "path": "/genre/stats",
+      "auth": "none",
+      "validation": [],
+      "description": "Genre statistics."
+    },
+    {
+      "method": "GET",
+      "path": "/genre/:id",
+      "auth": "none",
+      "validation": [],
+      "description": "Get genre details."
+    },
+    {
+      "method": "POST",
+      "path": "/genre",
+      "auth": "ADMIN",
+      "validation": ["createGenreZodSchema"],
+      "description": "Create a genre."
+    },
+    {
+      "method": "PATCH",
+      "path": "/genre/:id",
+      "auth": "ADMIN",
+      "validation": ["updateGenreZodSchema"],
+      "description": "Update a genre."
+    },
+    {
+      "method": "DELETE",
+      "path": "/genre/:id",
+      "auth": "ADMIN",
+      "validation": [],
+      "description": "Delete a genre."
+    },
+
+    {
+      "method": "GET",
+      "path": "/book",
+      "auth": "none",
+      "validation": ["bookQueryZodSchema"],
+      "description": "List / query books."
+    },
+    {
+      "method": "GET",
+      "path": "/book/stats",
+      "auth": "none",
+      "validation": [],
+      "description": "Book statistics."
+    },
+    {
+      "method": "GET",
+      "path": "/book/search",
+      "auth": "none",
+      "validation": [],
+      "description": "Search books."
+    },
+    {
+      "method": "GET",
+      "path": "/book/genre/:genreId",
+      "auth": "none",
+      "validation": [],
+      "description": "Get books by genre."
+    },
+    {
+      "method": "GET",
+      "path": "/book/:id",
+      "auth": "none",
+      "validation": [],
+      "description": "Get a single book by id."
+    },
+    {
+      "method": "POST",
+      "path": "/book",
+      "auth": "ADMIN",
+      "validation": ["createBookZodSchema"],
+      "description": "Admin: create book (multipart `coverImage` upload)."
+    },
+    {
+      "method": "PATCH",
+      "path": "/book/:id",
+      "auth": "ADMIN",
+      "validation": ["updateBookZodSchema"],
+      "description": "Admin: update book (optional `coverImage` upload)."
+    },
+    {
+      "method": "DELETE",
+      "path": "/book/:id",
+      "auth": "ADMIN",
+      "validation": [],
+      "description": "Admin: delete book."
+    },
+
+    {
+      "method": "POST",
+      "path": "/shelf",
+      "auth": "USER|ADMIN",
+      "validation": ["createShelfZodSchema"],
+      "description": "Add book to user's shelf."
+    },
+    {
+      "method": "GET",
+      "path": "/shelf",
+      "auth": "USER|ADMIN",
+      "validation": ["shelfQueryZodSchema"],
+      "description": "Get user's shelves with filters."
+    },
+    {
+      "method": "GET",
+      "path": "/shelf/book/:bookId",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Get shelf entry for a book."
+    },
+    {
+      "method": "PATCH",
+      "path": "/shelf/:shelfId",
+      "auth": "USER|ADMIN",
+      "validation": ["updateShelfZodSchema"],
+      "description": "Update shelf entry."
+    },
+    {
+      "method": "PATCH",
+      "path": "/shelf/:shelfId/progress",
+      "auth": "USER|ADMIN",
+      "validation": ["updateProgressZodSchema"],
+      "description": "Update reading progress."
+    },
+    {
+      "method": "PATCH",
+      "path": "/shelf/:shelfId/favorite",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Toggle favorite."
+    },
+    {
+      "method": "DELETE",
+      "path": "/shelf/:shelfId",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Remove from shelf (by shelf id)."
+    },
+    {
+      "method": "DELETE",
+      "path": "/shelf/book/:bookId",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Remove from shelf (by book id)."
+    },
+    {
+      "method": "GET",
+      "path": "/shelf/stats",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Shelf statistics."
+    },
+    {
+      "method": "GET",
+      "path": "/shelf/currently-reading",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Get currently reading books."
+    },
+    {
+      "method": "GET",
+      "path": "/shelf/recommendations",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Get recommendations based on shelf."
+    },
+
+    {
+      "method": "GET",
+      "path": "/review/book/:bookId",
+      "auth": "none",
+      "validation": ["reviewQueryZodSchema"],
+      "description": "Get approved reviews for a book (public)."
+    },
+    {
+      "method": "GET",
+      "path": "/review/:reviewId",
+      "auth": "none",
+      "validation": [],
+      "description": "Get a single review."
+    },
+    {
+      "method": "POST",
+      "path": "/review",
+      "auth": "USER|ADMIN",
+      "validation": ["createReviewZodSchema"],
+      "description": "Create a review."
+    },
+    {
+      "method": "GET",
+      "path": "/review/user/my-reviews",
+      "auth": "USER|ADMIN",
+      "validation": ["reviewQueryZodSchema"],
+      "description": "Get current user's reviews."
+    },
+    {
+      "method": "GET",
+      "path": "/review/user/stats",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Get user's review stats."
+    },
+    {
+      "method": "PATCH",
+      "path": "/review/:reviewId",
+      "auth": "USER|ADMIN",
+      "validation": ["updateReviewZodSchema"],
+      "description": "Update user's review."
+    },
+    {
+      "method": "DELETE",
+      "path": "/review/:reviewId",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Delete user's review."
+    },
+    {
+      "method": "POST",
+      "path": "/review/:reviewId/vote",
+      "auth": "USER|ADMIN",
+      "validation": ["voteReviewZodSchema"],
+      "description": "Vote (up/down) on a review."
+    },
+    {
+      "method": "GET",
+      "path": "/review",
+      "auth": "ADMIN",
+      "validation": ["reviewQueryZodSchema"],
+      "description": "Admin: list all reviews."
+    },
+    {
+      "method": "GET",
+      "path": "/review/moderation/pending",
+      "auth": "ADMIN",
+      "validation": ["reviewQueryZodSchema"],
+      "description": "Admin: list pending reviews for moderation."
+    },
+    {
+      "method": "PATCH",
+      "path": "/review/:reviewId/moderate",
+      "auth": "ADMIN",
+      "validation": ["moderateReviewZodSchema"],
+      "description": "Admin: approve/reject a review."
+    },
+    {
+      "method": "GET",
+      "path": "/review/admin/stats",
+      "auth": "ADMIN",
+      "validation": [],
+      "description": "Review statistics (admin)."
+    },
+
+    {
+      "method": "GET",
+      "path": "/recommendation/personalized",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Get personalized recommendations for user."
+    },
+    {
+      "method": "GET",
+      "path": "/recommendation/stats",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Recommendation stats (per-user)."
+    },
+    {
+      "method": "POST",
+      "path": "/recommendation/refresh",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Refresh user's recommendations."
+    },
+    {
+      "method": "GET",
+      "path": "/recommendation/why-recommended/:bookId",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Explain why a book was recommended."
+    },
+    {
+      "method": "PATCH",
+      "path": "/recommendation/:recommendationId/view",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Mark recommendation as viewed."
+    },
+    {
+      "method": "PATCH",
+      "path": "/recommendation/:recommendationId/click",
+      "auth": "USER|ADMIN",
+      "validation": [],
+      "description": "Mark recommendation as clicked."
+    },
+    {
+      "method": "GET",
+      "path": "/recommendation/admin/stats",
+      "auth": "ADMIN",
+      "validation": [],
+      "description": "System-wide recommendation stats (admin)."
+    },
+    {
+      "method": "DELETE",
+      "path": "/recommendation/admin/cleanup",
+      "auth": "ADMIN",
+      "validation": [],
+      "description": "Cleanup expired recommendations (admin/cron)."
+    },
+
+    {
+      "method": "GET",
+      "path": "/tutorial/published",
+      "auth": "none",
+      "validation": ["tutorialQueryZodSchema"],
+      "description": "List published tutorials (public)."
+    },
+    {
+      "method": "GET",
+      "path": "/tutorial/published/:id",
+      "auth": "none",
+      "validation": [],
+      "description": "Get published tutorial by id."
+    },
+    {
+      "method": "POST",
+      "path": "/tutorial",
+      "auth": "ADMIN",
+      "validation": ["createTutorialZodSchema"],
+      "description": "Admin: create tutorial."
+    },
+    {
+      "method": "GET",
+      "path": "/tutorial",
+      "auth": "ADMIN",
+      "validation": ["tutorialQueryZodSchema"],
+      "description": "Admin: list all tutorials."
+    },
+    {
+      "method": "GET",
+      "path": "/tutorial/stats",
+      "auth": "ADMIN",
+      "validation": [],
+      "description": "Tutorial statistics (admin)."
+    },
+    {
+      "method": "GET",
+      "path": "/tutorial/:id",
+      "auth": "ADMIN",
+      "validation": [],
+      "description": "Admin: get tutorial by id."
+    },
+    {
+      "method": "PATCH",
+      "path": "/tutorial/:id",
+      "auth": "ADMIN",
+      "validation": ["updateTutorialZodSchema"],
+      "description": "Admin: update tutorial."
+    },
+    {
+      "method": "DELETE",
+      "path": "/tutorial/:id",
+      "auth": "ADMIN",
+      "validation": [],
+      "description": "Admin: delete tutorial."
+    },
+    {
+      "method": "PATCH",
+      "path": "/tutorial/:id/publish",
+      "auth": "ADMIN",
+      "validation": [],
+      "description": "Admin: publish tutorial."
+    },
+    {
+      "method": "PATCH",
+      "path": "/tutorial/:id/unpublish",
+      "auth": "ADMIN",
+      "validation": [],
+      "description": "Admin: unpublish tutorial."
+    },
+    {
+      "method": "POST",
+      "path": "/tutorial/reorder",
+      "auth": "ADMIN",
+      "validation": [],
+      "description": "Admin: reorder tutorials."
+    }
+  ]
+}
