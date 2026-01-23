@@ -12,9 +12,8 @@ import { IAuthProvider, IsActive } from "../user/user.interface";
 import { User } from "../user/user.model";
 
 const getNewAccessToken = async (refreshToken: string) => {
-  const newAccessToken = await createNewAccessTokenWithRefreshToken(
-    refreshToken
-  );
+  const newAccessToken =
+    await createNewAccessTokenWithRefreshToken(refreshToken);
 
   return {
     accessToken: newAccessToken,
@@ -23,7 +22,7 @@ const getNewAccessToken = async (refreshToken: string) => {
 
 const resetPassword = async (
   payload: Record<string, any>,
-  decodedToken: JwtPayload
+  decodedToken: JwtPayload,
 ) => {
   if (payload.id != decodedToken.userId) {
     throw new AppError(401, "You can not reset your password");
@@ -36,7 +35,7 @@ const resetPassword = async (
 
   const hashedPassword = await bcryptjs.hash(
     payload.newPassword,
-    Number(envVars.BCRYPT_SALT_ROUND)
+    Number(envVars.BCRYPT_SALT_ROUND),
   );
 
   isUserExist.password = hashedPassword;
@@ -59,7 +58,7 @@ const forgotPassword = async (email: string) => {
   ) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      `User is ${isUserExist.isActive}`
+      `User is ${isUserExist.isActive}`,
     );
   }
   if (isUserExist.isDeleted) {
@@ -76,7 +75,7 @@ const forgotPassword = async (email: string) => {
     expiresIn: "10m",
   });
 
-  const resetUILink = `${envVars.FRONTEND_URL}/reset-password?id=${isUserExist._id}&token=${resetToken}`;
+  const resetUILink = `${envVars.FRONTEND_URL}/reset-password?id=${isUserExist._id}&token=${resetToken}&email=${isUserExist.email}`;
 
   sendEmail({
     to: isUserExist.email,
@@ -106,13 +105,13 @@ const setPassword = async (userId: string, plainPassword: string) => {
   ) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      "You have already set you password. Now you can change the password from your profile password update"
+      "You have already set you password. Now you can change the password from your profile password update",
     );
   }
 
   const hashedPassword = await bcryptjs.hash(
     plainPassword,
-    Number(envVars.BCRYPT_SALT_ROUND)
+    Number(envVars.BCRYPT_SALT_ROUND),
   );
 
   const credentialProvider: IAuthProvider = {
@@ -132,13 +131,13 @@ const setPassword = async (userId: string, plainPassword: string) => {
 const changePassword = async (
   oldPassword: string,
   newPassword: string,
-  decodedToken: JwtPayload
+  decodedToken: JwtPayload,
 ) => {
   const user = await User.findById(decodedToken.userId);
 
   const isOldPasswordMatch = await bcryptjs.compare(
     oldPassword,
-    user!.password as string
+    user!.password as string,
   );
   if (!isOldPasswordMatch) {
     throw new AppError(httpStatus.UNAUTHORIZED, "Old Password does not match");
@@ -146,7 +145,7 @@ const changePassword = async (
 
   user!.password = await bcryptjs.hash(
     newPassword,
-    Number(envVars.BCRYPT_SALT_ROUND)
+    Number(envVars.BCRYPT_SALT_ROUND),
   );
 
   user!.save();
